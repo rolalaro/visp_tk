@@ -180,8 +180,8 @@ Depth-stream-related
 Features-related
 ^^^^^^^^^^^^^^^^
 
-* *OPTIONAL* ``apriltag_topics``: a vector of strings. Each item corresponds to the name of a :cpp:class:`visp_tracker_common::msg::AprilTagDetectionArray` topic.
-* *OPTIONAL* ``features_topics``: a vector of strings. Each item corresponds to the name of a :cpp:class:`visp_tracker_common::msg::NamedFeatureArray` topic.
+* *OPTIONAL* ``apriltag_topics``: a vector of strings. Each item corresponds to the name of a `visp_tracker_common::msg::AprilTagDetectionArray <../interfaces/msg/AprilTagDetectionArray.html>`__ topic.
+* *OPTIONAL* ``features_topics``: a vector of strings. Each item corresponds to the name of a `visp_tracker_common::msg::NamedFeatureArray <../interfaces/msg/NamedFeatureArray.html>`__ topic.
 * *OPTIONAL* ``poses_topics``: a vector of strings. Each item corresponds to the name of a ``geometry_msgs::msg::PoseStamped`` topic.
 
 Related to services
