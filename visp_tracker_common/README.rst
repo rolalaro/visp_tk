@@ -98,7 +98,7 @@ Supposed you have a ros2 work space just run:
 BaseTracker node
 ================
 
-This section will present the different parameters of the ``visp_tracker_common::BaseTracker`` class.
+This section will present the different parameters of the :cpp:class:`visp_tracker_common::BaseTracker` class.
 
 Related to subscription / publication
 -------------------------------------
@@ -123,12 +123,12 @@ Related to the display
 BaseMultiModalTracker node
 ==========================
 
-This section will present the different parameters of the ``visp_tracker_common::BaseMultiModalTracker`` class.
+This section will present the different parameters of the :cpp:class:`visp_tracker_common::BaseMultiModalTracker` class.
 The node will determine if it requires depth or not depending on the tracker configuration. If the node
 requires depth, the ``depth_camera_info_topic_name`` and ``depth_image_topic_name`` becomes **REQUIRED**.
 If the tracker requires depth, a `message_filters::Synchronizer <https://github.com/ros2/message_filters/blob/rolling/doc/index.rst>`__
 is used to temporally synchronize the depth stream and the color stream. **NB**: using the ``TrackerGUI`` class
-on the same computer than a class inheriting from ``visp_tracker_common::BaseMultiModalTracker`` and using depth
+on the same computer than a class inheriting from :cpp:class:`visp_tracker_common::BaseMultiModalTracker` and using depth
 leads to the freezing of the tracker, due to a desynchronization of the color and depth streams.
 
 Related to subscription / publication
@@ -180,14 +180,14 @@ Depth-stream-related
 Features-related
 ^^^^^^^^^^^^^^^^
 
-* *OPTIONAL* ``apriltag_topics``: a vector of strings. Each item corresponds to the name of a ``visp_tracker_common::msg::AprilTagDetectionArray`` topic.
-* *OPTIONAL* ``features_topics``: a vector of strings. Each item corresponds to the name of a ``visp_tracker_common::msg::NamedFeatureArray`` topic.
+* *OPTIONAL* ``apriltag_topics``: a vector of strings. Each item corresponds to the name of a :cpp:class:`visp_tracker_common::msg::AprilTagDetectionArray` topic.
+* *OPTIONAL* ``features_topics``: a vector of strings. Each item corresponds to the name of a :cpp:class:`visp_tracker_common::msg::NamedFeatureArray` topic.
 * *OPTIONAL* ``poses_topics``: a vector of strings. Each item corresponds to the name of a ``geometry_msgs::msg::PoseStamped`` topic.
 
 Related to services
 -------------------
 
-* **REQUIRED** ``client_nodes``: a vector of strings. Each item corresponds to the name of a node that inherits either from ``visp_tracker_common::BaseTracker`` or ``visp_tracker_common::BaseMultiModalTracker``.
+* **REQUIRED** ``client_nodes``: a vector of strings. Each item corresponds to the name of a node that inherits either from :cpp:class:`visp_tracker_common::BaseTracker` or :cpp:class:`visp_tracker_common::BaseMultiModalTracker`.
   This name will be used to compose the name of services that can be called upon.
 
 Related to display
