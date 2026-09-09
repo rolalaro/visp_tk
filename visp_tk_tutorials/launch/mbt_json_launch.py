@@ -10,7 +10,7 @@ from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
 def prepare_parameters(context):
-
+    ## [Getting the launch arguments values]
     config_file = LaunchConfiguration("config_file")
     depth_camera_info_topic_name = LaunchConfiguration("depth_camera_info_topic_name")
     depth_config_file = LaunchConfiguration("depth_config_file")
@@ -57,6 +57,7 @@ def prepare_parameters(context):
                 {'z_factor': z_factor}
                 ]
 
+    ## [Checking the validity of some launch arguments]
     # Trick to manage other_tracker and reference_tracker that can be empty list of strings
     other_tracker_raw = LaunchConfiguration("other_tracker").perform(context)
     reference_tracker_raw = LaunchConfiguration("reference_tracker").perform(context)
@@ -93,6 +94,7 @@ def prepare_parameters(context):
     if len(reference_tracker_parsed ) > 0:
         parameters.append({'reference_tracker': reference_tracker_parsed})
 
+    ## [Instanciating the node]
     mbt_node = Node(
         package="visp_mbt",
         executable="visp_mbt_node",
@@ -102,7 +104,7 @@ def prepare_parameters(context):
         parameters=parameters,
     )
 
-    # Rosbag player
+    ## [Rosbag player]
     bag_folder = PathJoinSubstitution(
         [FindPackageShare("visp_tk_tutorials"), "bag", "mbt", "tutorial-static-box-humble"]
     )
@@ -118,11 +120,12 @@ def prepare_parameters(context):
         shell=True
       )
 
-    # Launch the node after having set GOMP_SPINCOUNT OpenMP variable to 0 to avoid waiting between threads
+    ## [Launching nodes]
     spawn_process = GroupAction([
       bag_player,
       mbt_node])
 
+    ## [Handling shutdown]
     shutdown_handler = RegisterEventHandler(
             OnProcessExit(
                 target_action=mbt_node,
