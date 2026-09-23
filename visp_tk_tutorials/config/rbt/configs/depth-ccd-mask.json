@@ -1,5 +1,4 @@
 {
-  "model": "package://visp_tk_tutorials/config/rbt/models/dragon/dragon.obj",
   "vvs": {
     "gain": 1.0,
     "maxIterations": 10,
