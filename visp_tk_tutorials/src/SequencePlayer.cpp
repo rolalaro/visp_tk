@@ -225,7 +225,7 @@ void SequencePlayer::periodic_publication()
 {
   static unsigned int frame_id = 0;
   static unsigned char frame_0_iter = 0;
-  const unsigned char NB_REPET_FRAME_0 = 30;
+  const unsigned char NB_REPET_FRAME_0 = 150; // The first frame will be repeated during around 5s
   // Updating headers
   SequenceFrame &frame = getFrame(frame_id);
   if (frame_id == 0) {
