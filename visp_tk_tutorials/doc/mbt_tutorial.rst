@@ -50,7 +50,7 @@ When you first start the launch file, you should see something similar to the fo
    :width: 90%
    :align: center
 
-After left clicking on the image, the detector will be turned on, and you should see
+After left clicking on the image, the tracker will be turned on, and you should see
 
 .. figure:: images/mbt_json_init.png
    :width: 90%

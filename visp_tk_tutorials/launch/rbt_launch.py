@@ -26,7 +26,6 @@ def handle_object_parameter(context):
   stream_qos_durability = LaunchConfiguration("stream_qos_durability")
   stream_qos_reliability = LaunchConfiguration("stream_qos_reliability")
   z_factor = LaunchConfiguration("z_factor")
-
   ## [Handling tracked object]
   object_name = LaunchConfiguration("object_name").perform(context)
   if object_name == "dragon":
@@ -37,11 +36,7 @@ def handle_object_parameter(context):
        model_file = "package://visp_tk_tutorials/config/rbt/models/stomach/stomach.obj"
   else:
      raise RuntimeError(f"Unexpected object_name {object_name}")
-
-  # ------------------------------------------------------------------ #
-  #  ROS2 bag node node                                                    #
-  # ------------------------------------------------------------------ #
-  # BEGIN_sequence_player
+  ## [Sequence player]
   sequence_folder = PathJoinSubstitution(
       [FindPackageShare("visp_tk_tutorials"), "sequence"]
   )
@@ -62,12 +57,7 @@ def handle_object_parameter(context):
           {'init_pose_topic_name': init_pose_topic_name}
       ]
     )
-  # END_sequence_player
-
-  # ------------------------------------------------------------------ #
-  #  RBT tracker node                                               #
-  # ------------------------------------------------------------------ #
-  # BEGIN_RBT_NODE
+  ## [RBT tracker node]
   rbt_node = Node(
       package='visp_rbt',
       # namespace="rbt_ns",
@@ -93,9 +83,7 @@ def handle_object_parameter(context):
           {'z_factor' : z_factor}
       ]
   )
-  # BEGIN_RBT_NODE
-
-  # BEGIN_SHUTDOWN
+  ## [Shutdown-event handler]
   shutdown_handler = RegisterEventHandler(
           OnProcessExit(
               target_action=rbt_node,
@@ -106,13 +94,13 @@ def handle_object_parameter(context):
               ]
           )
       )
-  # END_SHUTDOWN
+  ## [Returning launch description items]
   return [sequence_player, rbt_node, shutdown_handler]
 
 def generate_launch_description():
     ## [Declaring launch arguments]
     ld = LaunchDescription( [
-       # BEGIN_RBT_ARGUMENTS
+       ## [RBT arguments]
         DeclareLaunchArgument(
             'config_file',
             description="Absolute path towards the JSON config file for the RBT",
@@ -198,16 +186,15 @@ def generate_launch_description():
             description="Factor to convert the depth image expressed as uint16_t into meters. For instance, if a value of ``1000`` in the raw depth image corresponds to ``1 meter``, the ``z_factor`` must be set to ``0.001``.",
             default_value="0.001"
         ),
-      # END_RBT_ARGUMENTS
+      ## [Sequence-player arguments]
       DeclareLaunchArgument(
           "object_name",
           description="Name of the object to track in the sequence.",
           default_value="dragon",
           choices=["dragon","cube","stomach"]
       ),
-      # END_SEQ_ARGS
+      ## [Setting OpenMP environment variables]
         SetEnvironmentVariable(name='GOMP_SPINCOUNT', value='0'), # To enable OpenMP acceleration
-      # END_SET_ENV
     ])
 
     ld.add_action(OpaqueFunction(function=handle_object_parameter))
