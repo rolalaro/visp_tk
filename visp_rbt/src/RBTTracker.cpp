@@ -347,10 +347,10 @@ void RBTTracker::track()
 
     if (!m_display_initialized) {
       m_display_uchar = vpDisplayFactory::createDisplay(m_I);
-      m_display = vpDisplayFactory::createDisplay(m_Ic);
+      m_display = vpDisplayFactory::createDisplay(m_Ic, m_I.getWidth() + 20);
       if ((!m_is_headless_mode) && m_depth_is_required) {
         // The depth display is not used for the initialization, only for display when not using the remote GUI
-        m_display_depth = vpDisplayFactory::createDisplay(m_I_depth_display);
+        m_display_depth = vpDisplayFactory::createDisplay(m_I_depth_display, -1, m_I.getHeight() + 20);
       }
       m_display_initialized = true;
     }
