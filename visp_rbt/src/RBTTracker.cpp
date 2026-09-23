@@ -42,15 +42,19 @@ RBTTracker::RBTTracker(const std::string &name) : visp_tracker_common::BaseMulti
 
   // // ---- Others ----
   auto init_file_param = rclcpp::Parameter();
-  auto init_param_desc = rcl_interfaces::msg::ParameterDescriptor {};
+  auto init_param_desc = rcl_interfaces::msg::ParameterDescriptor { };
   init_param_desc.description = "This parameter must be set to the path towards the file that contains the init points.";
   this->declare_parameter("init_file", "", init_param_desc);
   this->get_parameter("init_file", init_file_param);
   m_init_file_path = init_file_param.as_string();
 
+  auto model_param_desc = rcl_interfaces::msg::ParameterDescriptor { };
+  model_param_desc.description = "When not configuring the model in the JSON configuration file, this parameter must be set to the path towards the model file of the object to track.";
+  this->declare_parameter("model_file", "", model_param_desc);
+
 #if defined(VISP_HAVE_DISPLAY) && defined(VISP_HAVE_MODULE_GUI)
   auto max_z_param = rclcpp::Parameter();
-  auto max_z_param_desc = rcl_interfaces::msg::ParameterDescriptor {};
+  auto max_z_param_desc = rcl_interfaces::msg::ParameterDescriptor { };
   max_z_param_desc.description = "This parameter permits the maximum depth we want to display.";
   this->declare_parameter("max_z_display", 2.0, max_z_param_desc);
   this->get_parameter("max_z_display", max_z_param);
@@ -69,6 +73,39 @@ RBTTracker::RBTTracker(const std::string &name) : visp_tracker_common::BaseMulti
 //////////////////////////////////////////////////////////////////////
 //                        INITIALIZATION                            //
 //////////////////////////////////////////////////////////////////////
+
+bool RBTTracker::init()
+{
+  bool status = visp_tracker_common::BaseMultiModalTracker::init();
+  if (!status) {
+    return false;
+  }
+
+  if (m_load_model_from_params) {
+    // Checking that the parameters were set
+    auto model_file_param = rclcpp::Parameter();
+    this->get_parameter("model_file", model_file_param);
+
+    std::string model_path = model_file_param.as_string();
+
+    if (model_path.empty()) {
+      RCLCPP_ERROR(this->get_logger(), "Object model is neither set in the configuration file nor in the node parameter %s.", model_file_param.get_name().c_str());
+      return false;
+    }
+
+    model_path = visp_common::path::path_retriever(model_path);
+
+    if (model_path.empty()) {
+      RCLCPP_ERROR(this->get_logger(), "The package designated by the node parameter %s is not known, have you sourced the correct workspace?", model_file_param.get_name().c_str());
+      return false;
+    }
+
+    // Set the model path
+    m_tracker.setModelPath(model_path);
+  }
+
+  return true;
+}
 
 bool RBTTracker::init_tracker()
 {
@@ -142,35 +179,41 @@ bool RBTTracker::init_from_json(const std::string &config_file_path)
   }
 
   // Parsing potential package:// used in the model sections
+  std::string model;
   if (!global_settings.contains("model")) {
-    RCLCPP_ERROR(this->get_logger(), " Configuration file %s does not contain the 'model' key with associated value.", config_file_path.c_str());
-    return false;
+    RCLCPP_WARN(this->get_logger(), " Configuration file %s does not contain the 'model' key with associated value.", config_file_path.c_str());
+    m_load_model_from_params = true;
   }
-
-  std::string model = global_settings["model"].get<std::string>();
-  if (model.empty()) {
-    RCLCPP_ERROR(this->get_logger(), " Configuration file %s contain the 'model' key but its associated value is empty.", config_file_path.c_str());
-    return false;
-  }
-
-  model = visp_common::path::path_retriever(model);
-  if (model.empty()) {
-    RCLCPP_ERROR(this->get_logger(), " Configuration file %s contain the 'model' key but its associated value %s is uncorrect.", config_file_path.c_str(), global_settings["model"].get<std::string>().c_str());
-    std::vector<std::string> split = vpIoTools::splitChain(global_settings["model"].get<std::string>(), "://");
-    if (split.size()> 1) {
-      RCLCPP_ERROR(this->get_logger(), " The package %s is not known, have you sourced it ?.", split[0].c_str());
+  else {
+    model = global_settings["model"].get<std::string>();
+    if (model.empty()) {
+      RCLCPP_ERROR(this->get_logger(), " Configuration file %s contain the 'model' key but its associated value is empty.", config_file_path.c_str());
+      return false;
     }
-    return false;
+
+    model = visp_common::path::path_retriever(model);
+    if (model.empty()) {
+      RCLCPP_ERROR(this->get_logger(), " Configuration file %s contain the 'model' key but its associated value %s is uncorrect.", config_file_path.c_str(), global_settings["model"].get<std::string>().c_str());
+      std::vector<std::string> split = vpIoTools::splitChain(global_settings["model"].get<std::string>(), "://");
+      if (split.size()> 1) {
+        RCLCPP_ERROR(this->get_logger(), " The package %s is not known, have you sourced it ?.", split[0].c_str());
+      }
+      return false;
+    }
+
+    if (!vpIoTools::checkFilename(model)) {
+      RCLCPP_ERROR(this->get_logger(), "Could not find the model file %s", model.c_str());
+      return false;
+    }
   }
 
-  if (!vpIoTools::checkFilename(model)) {
-    RCLCPP_ERROR(this->get_logger(), "Could not find the model file %s", model.c_str());
-    return false;
-  }
+
 
   // read config file
   m_tracker.loadConfigurationFile(config_file_path);
-  m_tracker.setModelPath(model);
+  if (!m_load_model_from_params) {
+    m_tracker.setModelPath(model);
+  }
 
   return true;
 }

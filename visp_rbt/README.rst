@@ -126,6 +126,11 @@ Related to configuration files
   Path towards the file that contains the init points. ``package://`` will be replaced by
   the path to the share folder of the corresponding package.
 
+- *OPTIONAL* ``"package://visp_tk_tutorials/config/rbt/models/dragon/dragon.obj"``: if the JSON configuration file
+does not contain the keyword ``model``, this parameter becomes **REQUIRED**. In this case, this parameter must be set to
+the path towards the model file of the object to track. Note that if the keyword ``model`` is set in the JSON
+configuration file, this parameter is **ignored**.
+
 Related to display
 ------------------
 
