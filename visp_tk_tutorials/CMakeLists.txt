@@ -42,7 +42,7 @@ include(ExternalProject)
 ExternalProject_Add(
   external_bag
   PREFIX "externals"
-  URL https://visp-doc.inria.fr/download/visp_tk/bags/tutorial-static-box-humble.tar.gz
+  URL https://visp-doc.inria.fr/download/visp_tk/bags/tutorial-static-box.tar.gz
   DOWNLOAD_NO_EXTRACT true
   CONFIGURE_COMMAND ""
   PATCH_COMMAND ""
@@ -55,7 +55,7 @@ ExternalProject_Get_Property(external_bag DOWNLOADED_FILE)
 set(BAG_DIR ${CMAKE_CURRENT_BINARY_DIR}/bag)
 set(BAG_MBT_SUBDIR mbt)
 set(BAG_METADATA ${BAG_DIR}/${BAG_MBT_SUBDIR}/metadata.yaml)
-set(BAG_DB ${BAG_DIR}/${BAG_MBT_SUBDIR}/tutorial-static-box-humble.db3)
+set(BAG_DB ${BAG_DIR}/${BAG_MBT_SUBDIR}/tutorial-static-box.db3)
 
 add_custom_command(
   OUTPUT ${BAG_METADATA} ${BAG_DB}
@@ -76,7 +76,7 @@ add_custom_target(
 ExternalProject_Add(
   external_bag_apriltag
   PREFIX "externals"
-  URL https://visp-doc.inria.fr/download/visp_tk/bags/humble_short_apriltag_tutorial.tar.gz
+  URL https://visp-doc.inria.fr/download/visp_tk/bags/tutorial-apriltag.tar.gz
   DOWNLOAD_NO_EXTRACT true
   CONFIGURE_COMMAND ""
   PATCH_COMMAND ""
@@ -88,7 +88,7 @@ ExternalProject_Get_Property(external_bag_apriltag DOWNLOADED_FILE)
 
 set(BAG_APRILTAG_SUBDIR apriltag)
 set(APRILTAG_BAG_METADATA ${BAG_DIR}/${BAG_APRILTAG_SUBDIR}/metadata.yaml)
-set(APRILTAG_BAG_DB ${BAG_DIR}/${BAG_APRILTAG_SUBDIR}/humble_short_apriltag_tutorial.db3)
+set(APRILTAG_BAG_DB ${BAG_DIR}/${BAG_APRILTAG_SUBDIR}/tutorial-apriltag.db3)
 
 add_custom_command(
   OUTPUT ${APRILTAG_BAG_METADATA} ${APRILTAG_BAG_DB}
