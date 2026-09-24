@@ -79,7 +79,7 @@ def generate_launch_description():
         parameters=[
             {
                 "video_device": LaunchConfiguration("video_device"),
-                "image_size": [1280, 720],   # native integers, no substitution
+                "image_size": [640, 480],   # native integers, no substitution
                 "time_per_frame": [1, 30],   # idem : 1/30 s <=> 30 fps
                 "camera_info_url": LaunchConfiguration("camera_info_url"),
             }
