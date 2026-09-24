@@ -42,7 +42,7 @@ include(ExternalProject)
 ExternalProject_Add(
   external_bag
   PREFIX "externals"
-  URL https://visp-doc.inria.fr/download/visp_tk/tutorial-static-box-humble.tar.gz
+  URL https://visp-doc.inria.fr/download/visp_tk/bags/tutorial-static-box-humble.tar.gz
   DOWNLOAD_NO_EXTRACT true
   CONFIGURE_COMMAND ""
   PATCH_COMMAND ""
@@ -76,7 +76,7 @@ add_custom_target(
 ExternalProject_Add(
   external_bag_apriltag
   PREFIX "externals"
-  URL https://visp-doc.inria.fr/download/visp_tk/humble_short_apriltag_tutorial.tar.gz
+  URL https://visp-doc.inria.fr/download/visp_tk/bags/humble_short_apriltag_tutorial.tar.gz
   DOWNLOAD_NO_EXTRACT true
   CONFIGURE_COMMAND ""
   PATCH_COMMAND ""
@@ -109,6 +109,5 @@ install(DIRECTORY
   ${BAG_DIR}
   DESTINATION share/${PROJECT_NAME}
 )
-
 
 ament_package()
