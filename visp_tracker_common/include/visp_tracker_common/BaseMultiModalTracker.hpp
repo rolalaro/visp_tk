@@ -139,7 +139,7 @@ protected:
   bool m_depth_cam_info_received = false; //!< Set to true once the color camera parameters have been retrieved.
   std::string m_depth_camera_info_topic_name; //!< The name of the depth camera topic.
   std::string m_depth_stream_name; //!< The name of the depth image topic.
-  VISP_NAMESPACE_ADDRESSING vpCameraParameters m_depth_cam; //!< The depth camera parameters.
+  visp::vpCameraParameters m_depth_cam; //!< The depth camera parameters.
   bool m_depth_is_required = false; //!< If true, it means that the tracker requires a depth stream to run.
   double m_z_factor; //!< Factor to translate uint16_t depth image into meters.
   std::string m_frame_id; //!< The frame ID of the RGB stream, in which will be expressed the tracking result.
