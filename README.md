@@ -14,11 +14,11 @@ visual-servoing and visual tracking applications. This repository includes:
 - **visp_mbt**: ROS 2 node wrapping the Model-Based Tracker (MBT) of ViSP.
 - **visp_rbt**: ROS 2 node wrapping the Render-Based Tracker (RBT) of ViSP.
 
-##  2. Install dependencies
+##  2. Prerequisities
 ### 2.1. Install ROS 2
 
 Make sure your ROS 2 core environment is installed. Refer to the official
-[ROS 2 installation guide](https://docs.ros.org/en/rolling/Installation.html) to get started.
+[ROS 2 documentation](https://docs.ros.org/) to get started.
 
 ### 2.2. Install ViSP
 
@@ -26,17 +26,22 @@ Please refer to the official installation instructions from the
 [ViSP installation tutorials](https://visp-doc.inria.fr/doxygen/visp-daily/tutorial_install.html).
 
 **NOTE**
-- Pre-built ViSP packages exist for Ubuntu (`libvisp-dev`) and ROS 2 (`ros2-$distro-visp`), but they are usually built
+- Pre-built ViSP packages exist for Ubuntu (`libvisp-dev`) and ROS 2 (`ros2-<distro>-visp`), but they are usually built
   against a reduced number of third-party libraries. Consequently, you might miss advanced features required to control
   hardware (e.g., Franka robots), acquire images from RealSense cameras, or leverage the Panda3D dependency needed for
   the `visp_rbt` package.
-- That's why **we strongly recommend building ViSP from source.**
+- That's why **we strongly recommend building ViSP from source.** See [tutorials](https://visp-doc.inria.fr/doxygen/visp-daily/tutorial_install_src.html).
+- After building ViSP from source, remember to set the `VISP_DIR` environment variable to your build directory,
+  for example:
+  ```bash
+	$ export VISP_DIR=$VISP_WS/visp-build
+  ```
 
 ## 3. Build `visp_tk`
 
 - Source your ROS 2 installation:
   ```bash
-  source /opt/ros/<ROS-DISTRO>/setup.bash
+  source /opt/ros/<distro>/setup.bash
   ```
 
 - Verify that ROS 2 is correctly detected. You should see environment variables matching your distribution
@@ -60,7 +65,7 @@ Please refer to the official installation instructions from the
   git clone https://github.com/lagadic/visp_tk.git -b $ROS_DISTRO
   ```
 
-- Install required ROS dependencies via rosdep:
+- Install required ROS 2 dependencies via rosdep:
 
   ```bash
   cd <YOUR_ROS2_WORKSPACE>
@@ -85,7 +90,6 @@ Please refer to the official installation instructions from the
   colcon build --symlink-install --packages-up-to visp_tk_tutorials
   ```
 
-
 ## 4. Build documentation
 
 - To generate the package documentation, first install `rosdoc2` if you haven't already:
@@ -105,7 +109,6 @@ Please refer to the official installation instructions from the
   ```
 
 - The generated documentation will be available in the `docs_output` folder.
-
 
 ## 5. Usage
 
