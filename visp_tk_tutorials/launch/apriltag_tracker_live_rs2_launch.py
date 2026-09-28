@@ -1,10 +1,10 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, RegisterEventHandler, EmitEvent, LogInfo, SetEnvironmentVariable
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler, EmitEvent, LogInfo
 from launch.events import Shutdown
 from launch.event_handlers import (
     OnProcessExit
 )
-from launch.substitutions import LaunchConfiguration, FindExecutable, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -14,7 +14,7 @@ def generate_launch_description():
     #  Launch arguments                                                    #
     # ------------------------------------------------------------------ #
     declared_args = [
-       # BEGIN_APRILTAG_ARGUMENTS
+        # BEGIN_APRILTAG_ARGUMENTS
         DeclareLaunchArgument(
             "tag_family",
             default_value="36h11",
@@ -22,12 +22,12 @@ def generate_launch_description():
         ),
         DeclareLaunchArgument(
             "tag_size_keys",
-            default_value="[-1,0,1]",
+            default_value="[-1]",
             description="List of tag IDs for which a size is specified. -1 = default for all.",
         ),
         DeclareLaunchArgument(
             "tag_size_values",
-            default_value="[0.2315,0.2315,0.064]",
+            default_value="[0.1]",
             description="Tag sizes in meters, matched by index with tag_size_keys.",
         ),
         DeclareLaunchArgument(
@@ -41,75 +41,59 @@ def generate_launch_description():
             description="Pose estimation method",
         ),
         DeclareLaunchArgument(
-            "rgb_image_topic_name",
-            default_value="/head_arm_rgbd/color/image_raw",
-            description="Topic name for the input image",
-        ),
-        DeclareLaunchArgument(
-              "rgb_camera_info_topic_name",
-              default_value="/head_arm_rgbd/color/camera_info",
-              description="Topic name for the camera parameters related to the input image",
-          ),
-        DeclareLaunchArgument(
-            "stream_qos_reliability",
-            default_value="best_effort",
-            choices=["best_effort","reliable"]
-        ),
-        DeclareLaunchArgument(
             "display_tag",
             default_value="true",
             description="Display the detected tags in a ViSP window",
         ),
-      # END_APRILTAG_ARGUMENTS
-      SetEnvironmentVariable(name='RMW_FASTRTPS_PUBLICATION_MODE', value='ASYNCHRONOUS') # To avoid laggy rosbag
-
+        # END_APRILTAG_ARGUMENTS
     ]
 
-    # ------------------------------------------------------------------ #
-    #  ROS2 bag node node                                                    #
-    # ------------------------------------------------------------------ #
-    # BEGIN_ROSBAG_PLAYER
-    bag_folder = PathJoinSubstitution(
-        [FindPackageShare("visp_tk_tutorials"), "bag", "apriltag","tutorial-apriltag"]
+    ## [Realsense camera]
+    realsense = IncludeLaunchDescription(
+        PathJoinSubstitution(
+              [
+                FindPackageShare('realsense2_camera'),
+                'launch',
+                'rs_launch.py'
+              ]),
+        launch_arguments={
+            "enable_rgbd": "false",
+            "enable_sync": "false",
+            "enable_color": "true",
+            "enable_depth": "false",
+            "align_depth.enable": "false",
+            "publish_tf": "true",# publish_tf permits to have the extrinsincs expressed as a TF2
+            "rgb_camera.color_profile": "640,480,30",
+            "depth_module.depth_profile": "0,0,0",
+        }.items()
     )
-    bag_player = ExecuteProcess(
-        cmd=[
-            "exec ",
-            FindExecutable(name="ros2"),
-            " bag",
-            " play ",
-            " --loop ",
-            bag_folder
-        ],
-        output="screen",
-        shell=True
-      )
-    # END_ROSBAG_PLAYER
 
     # ------------------------------------------------------------------ #
     #  AprilTag tracker node                                               #
     # ------------------------------------------------------------------ #
     # BEGIN_APRILTAG_NODE
+    # The BaseTracker of visp_tracker_common use its own parameters for some topics
+    # rgb_camera_info_topic_name  <=> camera_info topic
+    # rgb_image_topic_name  <=> image topic
     apriltag_tracker_node = Node(
         package="visp_apriltag",
         executable="visp_apriltag_node",
         name="tracker_apriltag",
         parameters=[
             {
-                "rgb_camera_info_topic_name": LaunchConfiguration("rgb_camera_info_topic_name"),
-                "rgb_image_topic_name": LaunchConfiguration("rgb_image_topic_name"),
+                "rgb_image_topic_name": "/camera/camera/color/image_raw",
+                "rgb_camera_info_topic_name": "/camera/camera/color/camera_info",
                 "tag_family": LaunchConfiguration("tag_family"),
                 "tag_size_keys": LaunchConfiguration("tag_size_keys"),
                 "tag_size_values": LaunchConfiguration("tag_size_values"),
                 "id_published": LaunchConfiguration("id_published"),
                 "pose_method": LaunchConfiguration("pose_method"),
                 "display_tag": LaunchConfiguration("display_tag"),
-                "stream_qos_reliability" : LaunchConfiguration("stream_qos_reliability")
             }
         ],
         output="screen",
     )
-    # BEGIN_APRILTAG_NODE
+    # END_APRILTAG_NODE
 
     # BEGIN_SHUTDOWN
     shutdown_handler = RegisterEventHandler(
@@ -124,4 +108,4 @@ def generate_launch_description():
         )
     # END_SHUTDOWN
 
-    return LaunchDescription(declared_args + [bag_player, apriltag_tracker_node, shutdown_handler])
+    return LaunchDescription(declared_args + [realsense, apriltag_tracker_node, shutdown_handler])

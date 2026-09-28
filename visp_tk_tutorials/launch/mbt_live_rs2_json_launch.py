@@ -1,11 +1,11 @@
 import yaml
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, RegisterEventHandler, SetEnvironmentVariable, GroupAction, EmitEvent, LogInfo, OpaqueFunction
+from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, RegisterEventHandler, SetEnvironmentVariable, GroupAction, EmitEvent, LogInfo, OpaqueFunction
 from launch.events import Shutdown
 from launch.event_handlers import (
     OnProcessExit
 )
-from launch.substitutions import LaunchConfiguration, FindExecutable, PathJoinSubstitution
+from launch.substitutions import LaunchConfiguration, PathJoinSubstitution
 from launch_ros.actions import Node
 from launch_ros.substitutions import FindPackageShare
 
@@ -104,27 +104,31 @@ def prepare_parameters(context):
         parameters=parameters,
     )
 
-    ## [Rosbag player]
-    bag_folder = PathJoinSubstitution(
-        [FindPackageShare("visp_tk_tutorials"), "bag", "mbt", "tutorial-static-box"]
+    ## [Realsense camera]
+    realsense = IncludeLaunchDescription(
+        PathJoinSubstitution(
+              [
+                FindPackageShare('realsense2_camera'),
+                'launch',
+                'rs_launch.py'
+              ]),
+        launch_arguments={
+            "enable_rgbd": "false",
+            "enable_sync": "true",
+            "enable_color": "true",
+            "enable_depth": "true",
+            "align_depth.enable": "false",
+            "publish_tf": "true",# publish_tf permits to have the extrinsincs expressed as a TF2
+            "rgb_camera.color_profile": "640,480,30",
+            "depth_module.depth_profile": "640,480,30",
+        }.items()
     )
-    bag_player = ExecuteProcess(
-        cmd=[
-            "exec ",
-            FindExecutable(name="ros2"),
-            " bag",
-            " play ",
-            " --loop ",
-            bag_folder
-        ],
-        output="screen",
-        shell=True
-      )
 
     ## [Launching nodes]
     spawn_process = GroupAction([
-      bag_player,
-      mbt_node])
+      realsense,
+      mbt_node
+      ])
 
     ## [Handling shutdown]
     shutdown_handler = RegisterEventHandler(
@@ -150,14 +154,14 @@ def generate_launch_description():
                 FindPackageShare('visp_tk_tutorials'),
                 'config',
                 'mbt',
-                'box',
-                'box.xml'
+                'teabox',
+                'teabox.json'
               ])
         ),
        DeclareLaunchArgument(
             "depth_camera_info_topic_name",
             description="Name of the depth camera topic.",
-            default_value=""
+            default_value="/camera/camera/depth/camera_info"
         ),
         DeclareLaunchArgument(
             "depth_config_file",
@@ -167,7 +171,7 @@ def generate_launch_description():
         DeclareLaunchArgument(
             "depth_image_topic_name",
             description="Name of the depth stream topic.",
-            default_value=""
+            default_value="/camera/camera/depth/image_rect_raw"
         ),
         DeclareLaunchArgument(
             "depth_model_file",
@@ -197,8 +201,8 @@ def generate_launch_description():
                 FindPackageShare('visp_tk_tutorials'),
                 'config',
                 'mbt',
-                'box',
-                'box.init'
+                'teabox',
+                'teabox.init'
               ])
         ),
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
@@ -214,7 +218,7 @@ def generate_launch_description():
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "other_tracker",
             description="When set, the extrinsics will be loaded from a TF2 topic and this parameter must be a vector of size 2 such as [\"${OTHER_TRACKER_NAME}\",\"${OTHER_TRACKER_FRAME_NAME}\"]. The parameter ``reference_tracker`` becomes **REQUIRED**",
-            default_value="[]"
+            default_value="[Depth,camera_depth_optical_frame]"
         ),
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "projection_error_threshold",
@@ -224,22 +228,22 @@ def generate_launch_description():
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "reference_tracker",
             description="When set, the extrinsics will be loaded from a TF2 topic and this parameter must be a vector of size 2 such as [\"${REF_TRACKER_NAME}\",\"${REF_TRACKER_FRAME_NAME}\"]. The parameter ``other_tracker`` becomes **REQUIRED**.",
-            default_value="[]"
+            default_value="[Color,camera_color_optical_frame]"
         ),
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "rgb_camera_info_topic_name",
             description="Name of the color camera topic.",
-            default_value="/wide_left/camera/camera_info"
+            default_value="/camera/camera/color/camera_info"
         ),
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "rgb_model_file",
             description="When using an XML file or not configuring the model for all trackers using a JSON file, this parameter becomes **REQUIRED** and must be set to the path towards the model file for the RGB tracker. ``package://`` will be replaced by the path to the share folder of the corresponding package.",
-            default_value="package://visp_tk_tutorials/config/mbt/box/box.cao"
+            default_value=""
         ),
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "rgb_image_topic_name",
             description="Name of the color image topic.",
-            default_value="/wide_left/camera/image_rect"
+            default_value="/camera/camera/color/image_raw"
         ),
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "stream_qos_depth",
@@ -259,12 +263,12 @@ def generate_launch_description():
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "tracker_names",
             description="When using an XML file, this parameter becomes **REQUIRED**. It consists in an array of names for the different trackers (RGB and potentially depth) to use and must be of the same size than the parameter ``tracker_types``.",
-            default_value="['Color']"
+            default_value="['']"
         ),
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "tracker_types",
             description="When using an XML file, this parameter becomes **REQUIRED**. It consists in an array of types of trackers to use and must be of the same size than the parameter ``tracker_names``. If a tracker must have several types (e.g. edge tracker + klt), the types name must be separated by a ``+`` (e.g. ``edge+klt`` is a valid value). RGB types cannot be mixed with depth types (e.g. ``edge+depthDense`` is not valid), they must be separated.",
-            default_value="['edge+klt']"
+            default_value="['']"
         ),
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "z_factor",

@@ -19,6 +19,7 @@
   <exec_depend>rosbag2</exec_depend>
   <exec_depend>visp_tk</exec_depend>
   <exec_depend>v4l2_camera</exec_depend>
+  <exec_depend>realsense2_camera</exec_depend>
 
   <export>
     <build_type>ament_cmake</build_type>
