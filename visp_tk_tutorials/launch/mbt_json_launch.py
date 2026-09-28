@@ -110,6 +110,7 @@ def prepare_parameters(context):
     )
     bag_player = ExecuteProcess(
         cmd=[
+            "exec ",
             FindExecutable(name="ros2"),
             " bag",
             " play ",

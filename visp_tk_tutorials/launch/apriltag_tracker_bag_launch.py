@@ -67,6 +67,7 @@ def generate_launch_description():
     )
     bag_player = ExecuteProcess(
         cmd=[
+            "exec ",
             FindExecutable(name="ros2"),
             " bag",
             " play ",
