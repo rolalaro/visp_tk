@@ -150,6 +150,7 @@ def generate_launch_description():
                 FindPackageShare('visp_tk_tutorials'),
                 'config',
                 'mbt',
+                'box',
                 'box.json'
               ])
         ),
@@ -196,6 +197,7 @@ def generate_launch_description():
                 FindPackageShare('visp_tk_tutorials'),
                 'config',
                 'mbt',
+                'box',
                 'box.init'
               ])
         ),

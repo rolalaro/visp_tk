@@ -150,6 +150,7 @@ def generate_launch_description():
                 FindPackageShare('visp_tk_tutorials'),
                 'config',
                 'mbt',
+                'box',
                 'box.xml'
               ])
         ),
@@ -196,6 +197,7 @@ def generate_launch_description():
                 FindPackageShare('visp_tk_tutorials'),
                 'config',
                 'mbt',
+                'box',
                 'box.init'
               ])
         ),
@@ -232,7 +234,7 @@ def generate_launch_description():
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "rgb_model_file",
             description="When using an XML file or not configuring the model for all trackers using a JSON file, this parameter becomes **REQUIRED** and must be set to the path towards the model file for the RGB tracker. ``package://`` will be replaced by the path to the share folder of the corresponding package.",
-            default_value="package://visp_tk_tutorials/config/mbt/box.cao"
+            default_value="package://visp_tk_tutorials/config/mbt/box/box.cao"
         ),
         DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
             "rgb_image_topic_name",
