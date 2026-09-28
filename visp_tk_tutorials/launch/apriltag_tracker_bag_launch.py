@@ -1,5 +1,5 @@
 from launch import LaunchDescription
-from launch.actions import DeclareLaunchArgument, ExecuteProcess, RegisterEventHandler, EmitEvent, LogInfo
+from launch.actions import DeclareLaunchArgument, ExecuteProcess, RegisterEventHandler, EmitEvent, LogInfo, SetEnvironmentVariable
 from launch.events import Shutdown
 from launch.event_handlers import (
     OnProcessExit
@@ -51,11 +51,18 @@ def generate_launch_description():
               description="Topic name for the camera parameters related to the input image",
           ),
         DeclareLaunchArgument(
+            "stream_qos_reliability",
+            default_value="best_effort",
+            choices=["best_effort","reliable"]
+        ),
+        DeclareLaunchArgument(
             "display_tag",
             default_value="true",
             description="Display the detected tags in a ViSP window",
         ),
       # END_APRILTAG_ARGUMENTS
+      SetEnvironmentVariable(name='RMW_FASTRTPS_PUBLICATION_MODE', value='ASYNCHRONOUS') # To avoid laggy rosbag
+
     ]
 
     # ------------------------------------------------------------------ #
@@ -97,6 +104,7 @@ def generate_launch_description():
                 "id_published": LaunchConfiguration("id_published"),
                 "pose_method": LaunchConfiguration("pose_method"),
                 "display_tag": LaunchConfiguration("display_tag"),
+                "stream_qos_reliability" : LaunchConfiguration("stream_qos_reliability")
             }
         ],
         output="screen",

@@ -269,7 +269,8 @@ def generate_launch_description():
             description="Factor to convert the depth image expressed as uint16_t into meters. For instance, if a value of ``1000`` in the raw depth image corresponds to ``1 meter``, the ``z_factor`` must be set to ``0.001``.",
             default_value="0.001"
         ),
-        SetEnvironmentVariable(name='GOMP_SPINCOUNT', value='0') # To enable OpenMP acceleration
+        SetEnvironmentVariable(name='GOMP_SPINCOUNT', value='0'), # To enable OpenMP acceleration
+        SetEnvironmentVariable(name='RMW_FASTRTPS_PUBLICATION_MODE', value='ASYNCHRONOUS') # To avoid laggy rosbag
         ]
     )
 
