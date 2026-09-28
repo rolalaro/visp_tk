@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
 
   int ret = EXIT_FAILURE;
   {
-    auto tracker = std::make_shared<visp_Rbt::RBTTracker>("tracker_mbt");
+    auto tracker = std::make_shared<visp_rbt::RBTTracker>("tracker_rbt");
     if (tracker->init()) {
       rclcpp::executors::SingleThreadedExecutor executor;
       executor.add_node(tracker);
