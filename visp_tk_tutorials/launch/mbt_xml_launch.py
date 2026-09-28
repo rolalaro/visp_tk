@@ -106,7 +106,7 @@ def prepare_parameters(context):
 
     ## [Rosbag player]
     bag_folder = PathJoinSubstitution(
-        [FindPackageShare("visp_tk_tutorials"), "bag","mbt", "tutorial-static-box-humble"]
+        [FindPackageShare("visp_tk_tutorials"), "bag", "mbt", "tutorial-static-box"]
     )
     bag_player = ExecuteProcess(
         cmd=[

@@ -2,7 +2,7 @@ AprilTag tutorial
 =================
 
 This is a tutorial for the ``visp_apriltag`` package. The documentation of the AprilTag and ArUco tags detector provided
-by ViSP can be found `here <https://visp-doc.inria.fr/doxygen/visp-daily/classvpDetectorAprilTag.html>`__
+by ViSP can be found `here <https://visp-doc.inria.fr/doxygen/visp-daily/classvpDetectorAprilTag.html>`__.
 ViSP documentation also provides step-by-step tutorials to progressively learn how to use the detector
 `here <https://visp-doc.inria.fr/doxygen/visp-daily/tutorial-detection-apriltag.htmll>`__ .
 
@@ -62,7 +62,7 @@ When you first start the launch file, you should see something similar to the fo
    :align: center
 
 After left clicking on the image, the detector will be turned on, and you should see the result of
-the detection on screen, which sould look like the following image (please be careful of using the same tag
+the detection on screen, which should look like the following image (please be careful of using the same tag
 family than the one set as the launch argument ``tag_family``):
 
 .. figure:: images/apriltag_live_detect.png

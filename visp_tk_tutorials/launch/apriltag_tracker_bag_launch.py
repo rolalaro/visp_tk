@@ -63,7 +63,7 @@ def generate_launch_description():
     # ------------------------------------------------------------------ #
     # BEGIN_ROSBAG_PLAYER
     bag_folder = PathJoinSubstitution(
-        [FindPackageShare("visp_tk_tutorials"), "bag", "apriltag","humble_short_apriltag_tutorial"]
+        [FindPackageShare("visp_tk_tutorials"), "bag", "apriltag","tutorial-apriltag"]
     )
     bag_player = ExecuteProcess(
         cmd=[
