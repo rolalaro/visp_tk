@@ -35,7 +35,7 @@ arguments, please run:
 
 .. code-block:: shell
 
-  ros2 launch visp_tk_tutorials rbt_launch.py --show-args
+  ros2 launch visp_tk_tutorials rbt_bag_launch.py --show-args
 
 You can for instance easily switch between the object to track thanks to the ``object_name`` launch argument.
 
@@ -58,11 +58,11 @@ Afterwards, a left click will momentarily pause the tracker, while a right click
 Code explanation
 ++++++++++++++++
 
-Let's have a look at ``rbt_launch.py``. Because it is a fairly big file, we will study the parts
+Let's have a look at ``rbt_bag_launch.py``. Because it is a fairly big file, we will study the parts
 separately. Let's first have a look to the :py:func:`generate_launch_description` method that is called
 by the ``ros2 launch`` utilitary or by a call to ``IncludeLaunchDescription`` in another launch file:
 
-.. literalinclude:: /_code/launch/rbt_launch.py
+.. literalinclude:: /_code/launch/rbt_bag_launch.py
   :language: python
   :lineno-match:
   :start-at: def generate_launch_description():
@@ -75,7 +75,7 @@ the processing of depth images when the depth stream is used too and helps accel
 
 Here is a quick overview of the :py:func:`handle_object_parameter` function:
 
-.. literalinclude:: /_code/launch/rbt_launch.py
+.. literalinclude:: /_code/launch/rbt_bag_launch.py
   :language: python
   :lineno-match:
   :start-at: def handle_object_parameter(context):
@@ -83,7 +83,7 @@ Here is a quick overview of the :py:func:`handle_object_parameter` function:
 
 First, we get the launch arguments values:
 
-.. literalinclude:: /_code/launch/rbt_launch.py
+.. literalinclude:: /_code/launch/rbt_bag_launch.py
   :language: python
   :lineno-match:
   :start-at: ## [Getting the values of the tracker-related launch arguments]
@@ -91,7 +91,7 @@ First, we get the launch arguments values:
 
 Then, we chose the object model that will be used by the RBT node from the ``object_name`` launch arguments:
 
-.. literalinclude:: /_code/launch/rbt_launch.py
+.. literalinclude:: /_code/launch/rbt_bag_launch.py
   :language: python
   :lineno-match:
   :start-at: ## [Handling tracked object]
@@ -99,7 +99,7 @@ Then, we chose the object model that will be used by the RBT node from the ``obj
 
 Then, we create a node that will play the sequence, publishing the images, camera info and initial pose:
 
-.. literalinclude:: /_code/launch/rbt_launch.py
+.. literalinclude:: /_code/launch/rbt_bag_launch.py
   :language: python
   :lineno-match:
   :start-at: ## [Sequence player]
@@ -107,7 +107,7 @@ Then, we create a node that will play the sequence, publishing the images, camer
 
 Then, we instanciate the ``visp_rbt`` node, using the dictionnary that we previously filled:
 
-.. literalinclude:: /_code/launch/rbt_launch.py
+.. literalinclude:: /_code/launch/rbt_bag_launch.py
   :language: python
   :lineno-match:
   :start-at: ## [RBT tracker node]
@@ -115,7 +115,7 @@ Then, we instanciate the ``visp_rbt`` node, using the dictionnary that we previo
 
 Finally, we ask to shutdown the whole launch file when the ``visp_rbt`` node dies:
 
-.. literalinclude:: /_code/launch/rbt_launch.py
+.. literalinclude:: /_code/launch/rbt_bag_launch.py
   :language: python
   :lineno-match:
   :start-at: ## [Shutdown-event handler]
