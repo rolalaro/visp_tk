@@ -121,7 +121,8 @@ Related to the tag detection
 Related to the pose computation
 -------------------------------
 
-- *OPTIONAL* ``tag_size``: if ``config_file`` is not set, this parameter becomes **REQUIRED**. It corresponds to the dimension of the tag, in meters. See `ViSP documentation <https://visp-doc.inria.fr/doxygen/visp-daily/classvpDetectorAprilTag.html>`__ for more information.
+- **REQUIRED** ``tag_size_keys``: it corresponds to the list of IDs of the tags for which ``tag_size_values`` will give the size. ``-1`` is a special key that means ``for all IDs that are not specified in this list``.
+- **REQUIRED** ``tag_size_values``: it corresponds to the list of dimension of the tag for each IDs specified in ``tag_size_keys``, in meters. The first item of ``tag_size_values`` will be associated to the first ID listed in ``tag_size_keys`` and so on. The size listed at the same position than the ID ``-1`` in ``tag_size_keys`` will be used **for all IDs that are not specified in the** ``tag_size_keys`` **list**. See `ViSP documentation <https://visp-doc.inria.fr/doxygen/visp-daily/classvpDetectorAprilTag.html>`__ for more information.
 - *OPTIONAL* ``pose_method``: if ``config_file`` is not set, this parameter becomes **REQUIRED**. It corresponds to the method to use to compute the pose of a tag. See `ViSP documentation <https://visp-doc.inria.fr/doxygen/visp-daily/classvpDetectorAprilTag.html>`__ for more information.
 - *OPTIONAL* ``align_z``: if true, the Z-axis will be aligned with the Z-axis of the camera.
 - *OPTIONAL* ``id_published``: if set, the node will publish the pose of the tag whose ID corresponds to this attribute
