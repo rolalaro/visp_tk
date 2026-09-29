@@ -55,14 +55,8 @@ arguments, please run:
 
   ros2 launch visp_tk_tutorials apriltag_tracker_live_v4l_launch.py --show-args
 
-When you first start the launch file, you should see something similar to the following image:
-
-.. figure:: images/apriltag_live_start.png
-   :width: 90%
-   :align: center
-
-After left clicking on the image, the detector will be turned on, and you should see the result of
-the detection on screen, which should look like the following image (please be careful of using the same tag
+When you start the launch file, the detector will be turned on, and you should see the result of
+the detection on screen. It should look like the following image (please be careful of using the same tag
 family than the one set as the launch argument ``tag_family``):
 
 .. figure:: images/apriltag_live_detect.png
@@ -149,13 +143,7 @@ Then you can run:
 
   ros2 launch visp_tk_tutorials apriltag_tracker_bag_launch.py
 
-When you first start the launch file, you should see something similar to the following image:
-
-.. figure:: images/apriltag_bag_start.png
-   :width: 90%
-   :align: center
-
-After left clicking on the image, the detector will be turned on, and you should see the result of
+When you start the launch file, the detector will be turned on, and you should see the result of
 the detection on screen, which sould look like the following image:
 
 .. figure:: images/apriltag_bag_expected_output.png

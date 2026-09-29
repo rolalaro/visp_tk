@@ -89,6 +89,7 @@ def generate_launch_description():
                 "id_published": LaunchConfiguration("id_published"),
                 "pose_method": LaunchConfiguration("pose_method"),
                 "display_tag": LaunchConfiguration("display_tag"),
+                "initial_tracking_status": True
             }
         ],
         output="screen",
