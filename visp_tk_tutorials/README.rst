@@ -1,4 +1,5 @@
-# visp_tk_tutorials
+``visp_tk_tutorials`` documentation
+===================================
 
 This package contains tutorials for the different packages of the `visp_tk` metapackage.
 
