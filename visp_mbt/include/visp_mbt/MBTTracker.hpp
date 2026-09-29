@@ -213,7 +213,6 @@ protected:
   ExtrinsicsHelper m_other_cam; //!< The name of the other camera frame and corresponding tracker name.
   bool m_extrinsics_from_tf = false; //!< If true, the extrinsics will be loaded from a TF2 using the associated node params.
   bool m_extrinsics_set = false; //!< If initializing extrinsics from TF2 topic, set to true once the extrinsics have been received.
-  bool m_tracker_initialized = false; //!< True when the tracker is correctly initialized, false when the tracking was lost or never began.
   bool m_tracker_cams_set = false; //!< True once the camera parameters of the tracker will be set.
   bool m_must_detect_failure = false; //!< If true, the tracker must monitor the projection error to invalidate the tracking if needed.
   double m_projection_error_thresh = 30.; //!< If m_must_detect_failure , maximum tolerated projection error.

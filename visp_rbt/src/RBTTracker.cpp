@@ -370,7 +370,13 @@ void RBTTracker::track()
   bool tracking_successful = false;
   if (m_has_to_track) {
     RCLCPP_DEBUG(this->get_logger(), "Starting tracking");
-    if (!m_tracker_initialized) {
+    bool tracker_initialized;
+    {
+      std::scoped_lock sl(m_mutex_initialized);
+      tracker_initialized = m_tracker_initialized;
+    }
+    if (!tracker_initialized) {
+      std::scoped_lock sl(m_mutex_initialized);
       m_tracker_initialized = init_tracking(cMo, display_frame);
     }
 
@@ -467,7 +473,10 @@ bool RBTTracker::init_tracking(vpHomogeneousMatrix &cMo, bool &display_frame)
     RCLCPP_DEBUG(this->get_logger(), "Initializing tracker by click...");
     m_tracker.initClick(m_Ic, m_init_file_path, true);
     m_tracker.getPose(cMo);
-    m_tracker_initialized = true;
+    {
+      std::scoped_lock sl(m_mutex_initialized);
+      m_tracker_initialized = true;
+    }
     if (m_is_headless_mode) {
       vpDisplay::close(m_I);
       vpDisplay::close(m_Ic);
@@ -561,6 +570,7 @@ bool RBTTracker::perform_tracking(vpHomogeneousMatrix &cMo, std::vector<std::str
       throw(vpException(vpException::notImplementedError, "RBT tracking result unknown"));
     }
     }
+    std::scoped_lock sl(m_mutex_initialized);
     m_tracker_initialized = false;
     return false;
   }

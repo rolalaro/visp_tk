@@ -148,7 +148,6 @@ protected:
 #endif
 
   // ----- Tracking-related attributes -----
-  bool m_tracker_initialized = false; //!< True when the tracker is correctly initialized, false when the tracking was lost or never began.
   bool m_tracker_cams_set = false; //!< True once the camera parameters of the tracker will be set.
   bool m_load_model_from_params = false; //!< If true, the model file must be read from the node parameters.
   std::string m_init_file_path; //!< Path towards the init file that contains the 3D coordinates of the points to click to initialize the tracker.
