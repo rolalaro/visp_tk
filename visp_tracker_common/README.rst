@@ -118,6 +118,7 @@ Related to the tracking
 * *OPTIONAL* ``config_file``: path to the configuration file to initialize the tracker. package:// will be replaced by the path to the share folder of the corresponding package.
 * *OPTIONAL* ``init_method``: initialization method to initialize the tracker. Default method is initialization by click.
 * *OPTIONAL* ``init_topic``: if the ``init_method`` is set to topic, this parameter becomes **REQUIRED** and must be set to the topic of type ``geometry_msgs:msg::PoseStamped`` the tracker must use to get the init pose.
+* *OPTIONAL* ``initial_tracking_status``: when this parameter is set to true, the node will start with the tracking active. By default, the tracking is inactive.
 
 Related to the display
 ----------------------
