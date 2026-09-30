@@ -360,7 +360,7 @@ void RBTTracker::track()
     vpDisplay::display(m_I_depth_display);
     {
       std::stringstream ss;
-      ss << "Left click to " << (m_has_to_track ? "stop" : "start") << " the tracking, right click to quit.";
+      ss << "Left click to " << (m_has_to_track ? "stop" : "start") << " the tracking, middle click to reinitialize the tracking, right click to quit.";
       vpDisplay::displayText(m_Ic, 20, 20, ss.str(), vpColor::red);
     }
   }
@@ -444,6 +444,12 @@ void RBTTracker::track()
       {
         std::scoped_lock lock(m_mutex_tracking);
         m_has_to_track = (!m_has_to_track);
+        break;
+      }
+      case vpMouseButton::button2:
+      {
+        std::scoped_lock lock(m_mutex_initialized);
+        m_tracker_initialized = false;
         break;
       }
       case vpMouseButton::button3:
