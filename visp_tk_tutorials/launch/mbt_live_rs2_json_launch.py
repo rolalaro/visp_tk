@@ -93,7 +93,6 @@ def prepare_parameters(context):
 
     if len(reference_tracker_parsed ) > 0:
         parameters.append({'reference_tracker': reference_tracker_parsed})
-
     ## [Instanciating the node]
     mbt_node = Node(
         package="visp_mbt",
@@ -103,7 +102,6 @@ def prepare_parameters(context):
         emulate_tty=True,
         parameters=parameters,
     )
-
     ## [Realsense camera]
     realsense = IncludeLaunchDescription(
         PathJoinSubstitution(
@@ -123,13 +121,11 @@ def prepare_parameters(context):
             "depth_module.depth_profile": "640,480,30",
         }.items()
     )
-
     ## [Launching nodes]
     spawn_process = GroupAction([
       realsense,
       mbt_node
       ])
-
     ## [Handling shutdown]
     shutdown_handler = RegisterEventHandler(
             OnProcessExit(
@@ -146,7 +142,7 @@ def prepare_parameters(context):
 
 def generate_launch_description():
     ld = LaunchDescription([
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             'config_file',
             description="Absolute path towards the config file for the MBT",
             default_value=PathJoinSubstitution(
@@ -193,7 +189,7 @@ def generate_launch_description():
             description = "If True, the node will not display anything, expecting that another takes in charge the GUI.",
             default_value="False"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             'init_file',
             description="Absolute path towards the `.init` file that indicates the clicks location to initialize the MBT",
             default_value=PathJoinSubstitution(
@@ -205,72 +201,76 @@ def generate_launch_description():
                 'teabox.init'
               ])
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             "init_method",
             description="Initialization method to initialize the tracker. Default method is initialization by click.",
             default_value="click"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             "init_topic",
             description="If the ``init_method`` is set to topic, this parameter becomes **REQUIRED** and must be set to the topic of type ``geometry_msgs:msg::PoseStamped`` the tracker must use to get the init pose.",
             default_value=""
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        ## [Launch argument for aligning streams, depth stream]
+        DeclareLaunchArgument(
             "other_tracker",
             description="When set, the extrinsics will be loaded from a TF2 topic and this parameter must be a vector of size 2 such as [\"${OTHER_TRACKER_NAME}\",\"${OTHER_TRACKER_FRAME_NAME}\"]. The parameter ``reference_tracker`` becomes **REQUIRED**",
             default_value="[Depth,camera_depth_optical_frame]"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        ## [End launch argument for aligning streams, depth stream]
+        DeclareLaunchArgument(
             "projection_error_threshold",
             description="Maximum tolerated projection error, if ``detect_failure`` is set to true.",
             default_value="30.0"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        ## [Launch argument for aligning streams, color stream]
+        DeclareLaunchArgument(
             "reference_tracker",
             description="When set, the extrinsics will be loaded from a TF2 topic and this parameter must be a vector of size 2 such as [\"${REF_TRACKER_NAME}\",\"${REF_TRACKER_FRAME_NAME}\"]. The parameter ``other_tracker`` becomes **REQUIRED**.",
             default_value="[Color,camera_color_optical_frame]"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        ## [End launch argument for aligning streams, color stream]
+        DeclareLaunchArgument(
             "rgb_camera_info_topic_name",
             description="Name of the color camera topic.",
             default_value="/camera/camera/color/camera_info"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             "rgb_model_file",
             description="When using an XML file or not configuring the model for all trackers using a JSON file, this parameter becomes **REQUIRED** and must be set to the path towards the model file for the RGB tracker. ``package://`` will be replaced by the path to the share folder of the corresponding package.",
             default_value=""
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             "rgb_image_topic_name",
             description="Name of the color image topic.",
             default_value="/camera/camera/color/image_raw"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             "stream_qos_depth",
             description="The depth of the queue of both the RGB and depth image streams (they need to be the same) if depth is required.",
             default_value="5"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             "stream_qos_durability",
             description="The durability of both the RGB and depth image streams (they need to be the same) if depth is required.",
             default_value="volatile"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             "stream_qos_reliability",
             description="The reliability of both the RGB and depth image streams (they need to be the same) if depth is required.",
             default_value="best_effort"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             "tracker_names",
             description="When using an XML file, this parameter becomes **REQUIRED**. It consists in an array of names for the different trackers (RGB and potentially depth) to use and must be of the same size than the parameter ``tracker_types``.",
             default_value="['']"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             "tracker_types",
             description="When using an XML file, this parameter becomes **REQUIRED**. It consists in an array of types of trackers to use and must be of the same size than the parameter ``tracker_names``. If a tracker must have several types (e.g. edge tracker + klt), the types name must be separated by a ``+`` (e.g. ``edge+klt`` is a valid value). RGB types cannot be mixed with depth types (e.g. ``edge+depthDense`` is not valid), they must be separated.",
             default_value="['']"
         ),
-        DeclareLaunchArgument( # used to define the launch argument that can be passed from another launch file or from the console.
+        DeclareLaunchArgument(
             "z_factor",
             description="Factor to convert the depth image expressed as uint16_t into meters. For instance, if a value of ``1000`` in the raw depth image corresponds to ``1 meter``, the ``z_factor`` must be set to ``0.001``.",
             default_value="0.001"

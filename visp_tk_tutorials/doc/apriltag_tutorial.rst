@@ -252,3 +252,42 @@ Then, you have to set the ``camera_info_url`` in order to point towards the file
 .. code-block:: shell
 
   ros2 launch visp_tk_tutorials apriltag_tracker_live_v4l_launch.py camera_info_url:=</path/to/file>
+
+Tutorial using a Realsense camera
+---------------------------------
+
+Purpose of this tutorial
+++++++++++++++++++++++++
+
+The purpose of this tutorial is to show how to configure a ``visp_apriltag`` node when using another sensor.
+We chose to use a Realsense RGBD sensor because it is  fairly spread among the community.
+
+How to launch it
+++++++++++++++++
+If you compiled the packages, you have to source the workspace in which you have compiled the packages.
+Otherwise, if you installed the packages using the package manager, you only have to source the ``/opt/ros/${ROS_DISTRO}/setup.bash``
+file (or one of the other ``setup`` files if you are not using bash).
+
+Then you can run:
+
+.. code-block:: shell
+
+  ros2 launch visp_tk_tutorials apriltag_tracker_live_rs2_launch.py
+
+The launch file accepts different arguments. To have the list and the explanations related to the
+arguments, please run:
+
+.. code-block:: shell
+
+  ros2 launch visp_tk_tutorials apriltag_tracker_live_rs2_launch.py --show-args
+
+If nothing appears on screen, it may mean that the ``realsense_camera`` package changed the names of
+the topic on which are published the data. Please run ``ros2 topic list`` and ``ros2 topic info -v /<camera_topic>``
+to check if the ``realsense_camera`` publisher and the ``tracker_rbt`` subscriber are both listed.
+If not, please change the topic names accordingly.
+
+Code explanation
+++++++++++++++++
+
+We won't give a detailed explanation of this launch file, because nothing of importance changed except the
+``realsense_camera`` node, which goes beyond the scope of this package.
