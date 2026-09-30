@@ -111,7 +111,7 @@ Here we suppose that you have a ROS 2  workspace in ``~/colcon_ws/`` folder.
             provides a separate development package or SDK, be sure it has been
             installed.
 
-      it means tha ViSP is not found. Use ``VISP_DIR`` to point to ``$VISP_WS/visp-build`` folder like:
+      it means that ViSP is not found. Use ``VISP_DIR`` to point to ``$VISP_WS/visp-build`` folder like:
 
         .. code-block:: shell
 
@@ -134,6 +134,11 @@ Related to configuration files
   See `the documentation of BaseTracker <../visp_tracker_common/index.html#basetracker-node>`__ for more information.
   Path towards the file that contains the init points. ``package://`` will be replaced by
   the path to the share folder of the corresponding package.
+
+- *OPTIONAL* ``"package://visp_tk_tutorials/config/rbt/models/dragon/dragon.obj"``: if the JSON configuration file
+does not contain the keyword ``model``, this parameter becomes **REQUIRED**. In this case, this parameter must be set to
+the path towards the model file of the object to track. Note that if the keyword ``model`` is set in the JSON
+configuration file, this parameter is **ignored**.
 
 Related to display
 ------------------

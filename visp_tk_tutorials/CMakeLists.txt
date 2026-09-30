@@ -30,8 +30,45 @@ project(visp_tk_tutorials)
 
 find_package(ament_cmake REQUIRED)
 
+# #############
+# Player node #
+# #############
+
+find_package(geometry_msgs REQUIRED)
+find_package(rclcpp REQUIRED)
+find_package(sensor_msgs REQUIRED)
+find_package(visp_common REQUIRED)
+find_package(VISP 3.7 REQUIRED COMPONENTS visp_core visp_io)
+
+add_executable(sequence_player_node
+  src/sequence_player.cpp
+  src/SequencePlayer.cpp
+)
+
+target_include_directories(sequence_player_node PUBLIC
+  "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>"
+  "$<INSTALL_INTERFACE:include/${PROJECT_NAME}>"
+)
+
+target_link_libraries(sequence_player_node PUBLIC
+  ${geometry_msgs_TARGETS}
+  ${rclcpp_TARGETS}
+  ${sensor_msgs_TARGETS}
+  ${visp_common_TARGETS}
+  ${VISP_LIBRARIES}
+)
+
 install(
- DIRECTORY config launch
+  TARGETS
+  sequence_player_node
+  DESTINATION lib/${PROJECT_NAME}
+)
+
+#
+#
+#
+install(
+ DIRECTORY config launch sequence
  DESTINATION share/${PROJECT_NAME}
 )
 

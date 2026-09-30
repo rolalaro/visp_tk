@@ -50,7 +50,7 @@ When you first start the launch file, you should see something similar to the fo
    :width: 90%
    :align: center
 
-After left clicking on the image, the detector will be turned on, and you should see
+After left clicking on the image, the tracker will be turned on, and you should see
 
 .. figure:: images/mbt_json_init.png
    :width: 90%
@@ -268,3 +268,72 @@ Finally, we ask to shutdown the whole launch file when the ``visp_mbt`` node die
   :lineno-match:
   :start-at: ## [Handling shutdown]
   :end-before: def generate_launch_description():
+
+Tutorial using a Realsense camera
+---------------------------------
+
+Purpose of this tutorial
+++++++++++++++++++++++++
+
+The purpose of this tutorial is to show how to configure a ``visp_mbt`` node when using an RGBD sensor.
+We chose to use a Realsense RGBD sensor, and deliberately chose not to require the depth stream aligned
+with the color stream in order to show you how to face such a situation.
+
+How to launch it
+++++++++++++++++
+If you compiled the packages, you have to source the workspace in which you have compiled the packages.
+Otherwise, if you installed the packages using the package manager, you only have to source the ``/opt/ros/${ROS_DISTRO}/setup.bash``
+file (or one of the other ``setup`` files if you are not using bash).
+
+Then you can run:
+
+.. code-block:: shell
+
+  ros2 launch visp_tk_tutorials mbt_live_rs2_launch.py
+
+The launch file accepts different arguments. To have the list and the explanations related to the
+arguments, please run:
+
+.. code-block:: shell
+
+  ros2 launch visp_tk_tutorials mbt_live_rs2_launch.py --show-args
+
+If nothing appears on screen, it may mean that the ``realsense_camera`` package changed the names of
+the topic on which are published the data. Please run ``ros2 topic list`` and ``ros2 topic info -v /<camera_topic>``
+to check if the ``realsense_camera`` publisher and the ``tracker_rbt`` subscriber are both listed.
+If not, please change the topic names accordingly.
+
+Code explanation
+++++++++++++++++
+
+We will only show the explanation of how is handled the fact that we use a depth stream that is not aligned
+with the color stream.
+
+.. literalinclude:: /_code/launch/mbt_live_rs2_launch.py
+  :language: python
+  :lineno-match:
+  :start-at: ## [Realsense camera]
+  :end-before: ## [Launching nodes]
+
+In the instanciation of the camera node, which is done in the ``rs_launch.py`` launch file of the ``realsense_camera``
+package, we explicitly ask not to align the depth stream with the color stream, and to publish the TFs in order to have
+the transform between the frames of the two sensors (the color one and the depth one).
+
+.. literalinclude:: /_code/launch/mbt_live_rs2_launch.py
+  :language: python
+  :lineno-match:
+  :start-at: ## [Launch argument for aligning streams, color stream]
+  :end-before: ## [End launch argument for aligning streams, color stream]
+
+By telling that the ``reference_tracker`` is the ``Color`` one, we mean that the tracking results will be expressed with
+regard to the color sensor. We then give the name of the frame that corresponds to the color sensor.
+
+.. literalinclude:: /_code/launch/mbt_live_rs2_launch.py
+  :language: python
+  :lineno-match:
+  :start-at: ## [Launch argument for aligning streams, depth stream]
+  :end-before: ## [End launch argument for aligning streams, depth stream]
+
+By telling that the ``other_tracker`` is the ``Depth`` one, we mean that the tracking features of the depth frame will be
+translated into the frame of the color sensor. We then give the name of the frame that corresponds to the depth sensor
+to extract the extrinsics from the TFs that are published.

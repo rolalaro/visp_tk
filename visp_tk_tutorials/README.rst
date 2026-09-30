@@ -1,4 +1,5 @@
-# visp_tk_tutorials
+``visp_tk_tutorials`` documentation
+===================================
 
 This package contains tutorials for the different packages of the `visp_tk` metapackage.
 
@@ -82,7 +83,7 @@ Here we suppose that you have a ROS 2  workspace in ``~/colcon_ws/`` folder.
             provides a separate development package or SDK, be sure it has been
             installed.
 
-      it means tha ViSP is not found. Use ``VISP_DIR`` to point to ``$VISP_WS/visp-build`` folder like:
+      it means that ViSP is not found. Use ``VISP_DIR`` to point to ``$VISP_WS/visp-build`` folder like:
 
         .. code-block:: shell
 

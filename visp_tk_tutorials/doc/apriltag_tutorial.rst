@@ -31,7 +31,7 @@ Then you can run:
 
 .. code-block:: shell
 
-  ros2 launch visp_tk_tutorials apriltag_tracker_live_launch.py
+  ros2 launch visp_tk_tutorials apriltag_tracker_live_v4l_launch.py
 
 If you get the following error when launching the launch file, it is because your camera has not been calibrated yet.
 See for instance the documentation of the `camera_calibration package <https://docs.ros.org/en/rolling/p/camera_calibration/doc/tutorial_mono.html>`__
@@ -53,16 +53,10 @@ arguments, please run:
 
 .. code-block:: shell
 
-  ros2 launch visp_tk_tutorials apriltag_tracker_live_launch.py --show-args
+  ros2 launch visp_tk_tutorials apriltag_tracker_live_v4l_launch.py --show-args
 
-When you first start the launch file, you should see something similar to the following image:
-
-.. figure:: images/apriltag_live_start.png
-   :width: 90%
-   :align: center
-
-After left clicking on the image, the detector will be turned on, and you should see the result of
-the detection on screen, which should look like the following image (please be careful of using the same tag
+When you start the launch file, the detector will be turned on, and you should see the result of
+the detection on screen. It should look like the following image (please be careful of using the same tag
 family than the one set as the launch argument ``tag_family``):
 
 .. figure:: images/apriltag_live_detect.png
@@ -72,9 +66,9 @@ family than the one set as the launch argument ``tag_family``):
 Code explanation
 ++++++++++++++++
 
-Let's have a look at ``apriltag_tracker_live_launch.py``:
+Let's have a look at ``apriltag_tracker_live_v4l_launch.py``:
 
-.. literalinclude:: /_code/launch/apriltag_tracker_live_launch.py
+.. literalinclude:: /_code/launch/apriltag_tracker_live_v4l_launch.py
   :language: python
   :linenos:
 
@@ -84,7 +78,7 @@ First, we begin by declaring the parameters that will be needed by the ``v4l2_ca
 `v4l2_camera documentation <https://gitlab.com/boldhearts/ros2_v4l2_camera/#nodes>`__ for
 more details on these parameters.
 
-.. literalinclude:: /_code/launch/apriltag_tracker_live_launch.py
+.. literalinclude:: /_code/launch/apriltag_tracker_live_v4l_launch.py
   :language: python
   :lineno-match:
   :start-after: BEGIN_V4L2_ARGUMENTS
@@ -94,7 +88,7 @@ Then, we declare the parameters of the ``visp_apriltag`` node. See
 `visp_apriltag documentation <../visp_apriltag/index.html#node-parameters>`__
 for a detailed explanation of its parameters.
 
-.. literalinclude:: /_code/launch/apriltag_tracker_live_launch.py
+.. literalinclude:: /_code/launch/apriltag_tracker_live_v4l_launch.py
   :language: python
   :lineno-match:
   :start-after: BEGIN_APRILTAG_ARGUMENTS
@@ -106,7 +100,7 @@ any messages on the ``pose`` topic.
 
 Then, we create the ``v4l2_camera`` node, using some launch arguments and some hard-coded values for its parameters:
 
-.. literalinclude:: /_code/launch/apriltag_tracker_live_launch.py
+.. literalinclude:: /_code/launch/apriltag_tracker_live_v4l_launch.py
   :language: python
   :lineno-match:
   :start-after: BEGIN_V4L2_NODE
@@ -114,7 +108,7 @@ Then, we create the ``v4l2_camera`` node, using some launch arguments and some h
 
 Then, we create the ``visp_apriltag`` node, using some launch arguments and some hard-coded values for its parameters:
 
-.. literalinclude:: /_code/launch/apriltag_tracker_live_launch.py
+.. literalinclude:: /_code/launch/apriltag_tracker_live_v4l_launch.py
   :language: python
   :lineno-match:
   :start-after: BEGIN_APRILTAG_NODE
@@ -122,7 +116,7 @@ Then, we create the ``visp_apriltag`` node, using some launch arguments and some
 
 Finally, we ask to stop all the nodes once the ``visp_apriltag`` is killed by a right click on the window.
 
-.. literalinclude:: /_code/launch/apriltag_tracker_live_launch.py
+.. literalinclude:: /_code/launch/apriltag_tracker_live_v4l_launch.py
   :language: python
   :lineno-match:
   :start-after: BEGIN_SHUTDOWN
@@ -149,13 +143,7 @@ Then you can run:
 
   ros2 launch visp_tk_tutorials apriltag_tracker_bag_launch.py
 
-When you first start the launch file, you should see something similar to the following image:
-
-.. figure:: images/apriltag_bag_start.png
-   :width: 90%
-   :align: center
-
-After left clicking on the image, the detector will be turned on, and you should see the result of
+When you start the launch file, the detector will be turned on, and you should see the result of
 the detection on screen, which sould look like the following image:
 
 .. figure:: images/apriltag_bag_expected_output.png
@@ -206,3 +194,100 @@ Finally, we ask to stop all the nodes once the ``visp_apriltag`` is killed by a 
   :lineno-match:
   :start-after: BEGIN_SHUTDOWN
   :end-before: END_SHUTDOWN
+
+How to exploit the AprilTag detection?
+--------------------------------------
+
+When tags are detected in the image, an array of the ``AprilTagDetection`` message is published on the ``/<node_name>/tags_info``
+topic:
+
+.. literalinclude:: /_code/msg/AprilTagDetection.msg
+  :linenos:
+
+.. Note::
+
+  If the message is not displayed, please refer to `the definition of the message present here. <../visp_tracker_common/interfaces/msg/AprilTagDetection.html>`__
+
+The ``AprilTagDetectionArray`` has one such element for each detected tag.
+
+Tips and Tricks: Tag pose not published
+--------------------------------------
+
+Several clues can show that the poses are not computed:
+
+  - If you use these tutorial launch files, the tags borders are displayed but the frame is not projected in the image.
+  - In the console, there are some error messages:
+
+    .. code-block:: shell
+
+      $ ros2 launch visp_tk_tutorials apriltag_tracker_live_v4l_launch.py
+      ...
+      [visp_apriltag_node-2] [INFO] [1790253340.305237753] [tracker_apriltag]: Receive image
+      [visp_apriltag_node-2] [WARN] [1790253340.310646522] [tracker_apriltag]: Published RGB camera parameters are incorrect.
+      [visp_apriltag_node-2] [WARN] [1790253340.340782250] [tracker_apriltag]: Published RGB camera parameters are incorrect.
+      [visp_apriltag_node-2] [WARN] [1790253340.373742210] [tracker_apriltag]: Published RGB camera parameters are incorrect.
+  - If you echo the topic ``/tracker_apriltag/tags_info``, you will see:
+
+    .. code-block:: shell
+
+      ...
+      is_pose_valid: false
+      pose:
+          position:
+          x: 0.0
+          y: 0.0
+          z: 0.0
+          orientation:
+          x: 0.0
+          y: 0.0
+          z: 0.0
+          w: 1.0
+
+It probably means that your camera is not calibrated. See for instance the documentation of the
+`camera_calibration package <https://docs.ros.org/en/rolling/p/camera_calibration/doc/tutorial_mono.html>`__
+to see how to calibrate your camera.
+
+Then, you have to set the ``camera_info_url`` in order to point towards the file resulting from the calibration process.
+
+.. code-block:: shell
+
+  ros2 launch visp_tk_tutorials apriltag_tracker_live_v4l_launch.py camera_info_url:=</path/to/file>
+
+Tutorial using a Realsense camera
+---------------------------------
+
+Purpose of this tutorial
+++++++++++++++++++++++++
+
+The purpose of this tutorial is to show how to configure a ``visp_apriltag`` node when using another sensor.
+We chose to use a Realsense RGBD sensor because it is  fairly spread among the community.
+
+How to launch it
+++++++++++++++++
+If you compiled the packages, you have to source the workspace in which you have compiled the packages.
+Otherwise, if you installed the packages using the package manager, you only have to source the ``/opt/ros/${ROS_DISTRO}/setup.bash``
+file (or one of the other ``setup`` files if you are not using bash).
+
+Then you can run:
+
+.. code-block:: shell
+
+  ros2 launch visp_tk_tutorials apriltag_tracker_live_rs2_launch.py
+
+The launch file accepts different arguments. To have the list and the explanations related to the
+arguments, please run:
+
+.. code-block:: shell
+
+  ros2 launch visp_tk_tutorials apriltag_tracker_live_rs2_launch.py --show-args
+
+If nothing appears on screen, it may mean that the ``realsense_camera`` package changed the names of
+the topic on which are published the data. Please run ``ros2 topic list`` and ``ros2 topic info -v /<camera_topic>``
+to check if the ``realsense_camera`` publisher and the ``tracker_rbt`` subscriber are both listed.
+If not, please change the topic names accordingly.
+
+Code explanation
+++++++++++++++++
+
+We won't give a detailed explanation of this launch file, because nothing of importance changed except the
+``realsense_camera`` node, which goes beyond the scope of this package.

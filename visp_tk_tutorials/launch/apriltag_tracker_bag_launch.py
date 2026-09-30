@@ -104,7 +104,8 @@ def generate_launch_description():
                 "id_published": LaunchConfiguration("id_published"),
                 "pose_method": LaunchConfiguration("pose_method"),
                 "display_tag": LaunchConfiguration("display_tag"),
-                "stream_qos_reliability" : LaunchConfiguration("stream_qos_reliability")
+                "stream_qos_reliability" : LaunchConfiguration("stream_qos_reliability"),
+                "initial_tracking_status": True
             }
         ],
         output="screen",
