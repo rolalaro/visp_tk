@@ -198,17 +198,8 @@ Finally, we ask to stop all the nodes once the ``visp_apriltag`` is killed by a 
 How to exploit the AprilTag detection?
 --------------------------------------
 
-When tags are detected in the image, an array of the ``AprilTagDetection`` message is published on the ``/<node_name>/tags_info``
-topic:
-
-.. literalinclude:: /_code/msg/AprilTagDetection.msg
-  :linenos:
-
-.. Note::
-
-  If the message is not displayed, please refer to `the definition of the message present here. <../visp_tracker_common/interfaces/msg/AprilTagDetection.html>`__
-
-The ``AprilTagDetectionArray`` has one such element for each detected tag.
+We strongly advise you to refer to the section "How to exploit the AprilTag detection?" of the `visp_apriltag documentation <../../visp_apriltag/index.html#how-to-exploit-the-apriltag-detection>`__
+to know how to use the results of the AprilTag detection and pose computation.
 
 Tips and Tricks: Tag pose not published
 --------------------------------------

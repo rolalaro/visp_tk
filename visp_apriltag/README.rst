@@ -33,13 +33,13 @@ Please refer to the official installation instructions from the
 
 .. Note::
 
-  * Pre-built ViSP packages exist for Ubuntu (`libvisp-dev`) and ROS 2 (`ros2-<distro>-visp`), but they are usually
-    built against a reduced number of third-party libraries. Consequently, you might miss advanced features required
+  * Pre-built ViSP packages exist for Ubuntu (``libvisp-dev``) and ROS 2 (``ros2-<distro>-visp``), but they are usually
+    built against a reduced number of third-party libraries. Consequently, you might miss advaFnced features required
     to control hardware (e.g., Franka robots), acquire images from RealSense cameras, or leverage the Panda3D
-    dependency needed for the `visp_apriltag` package.
+    dependency needed for the ``visp_apriltag`` package.
   * That's why **we strongly recommend building ViSP from source.**
     See `tutorials <https://visp-doc.inria.fr/doxygen/visp-daily/tutorial_install_src.html>`__.
-  * After building ViSP from source, remember to set the `VISP_DIR` environment variable to your build directory,
+  * After building ViSP from source, remember to set the ``VISP_DIR`` environment variable to your build directory,
     for example:
 
     .. code-block:: shell
@@ -132,3 +132,72 @@ Related to display
 ------------------
 
 - *OPTIONAL* ``display_tag``: if true, the tag borders will be displayed.
+
+How to exploit the AprilTag detection?
+======================================
+
+When tags are detected in the image, an array of the ``AprilTagDetection`` message is published on the ``/<node_name>/tags_info``
+topic:
+
+.. literalinclude:: /_code/msg/AprilTagDetection.msg
+  :linenos:
+
+.. Note::
+
+  If the message is not displayed, please refer to `the definition of the message present here. <../visp_tracker_common/interfaces/msg/AprilTagDetection.html>`__
+
+The ``AprilTagDetectionArray`` has one such element for each detected tag.
+
+.. Warning::
+
+  If you are interested in the 3D pose of the tag with regard to the camera, please check the ``is_pose_valid`` field to
+  check if the pose could actually be computed.
+
+If you set ``id_published`` to a value different from -1, the pose of the desired ID will be published in the
+pose topic inherited from the ``visp_tracker_common::BaseTracker`` class. If you set ``id_published`` to a value
+different from -1  and no poses are published, please refer to the `Tips and Tricks: Tag pose not published`_ section.
+
+.. Warning::
+
+  Please keep in mind that the node does not check if several tags with the same ID than ``id_published`` are visible in
+  the image. If that situation happens, the pose topic inherited from the ``visp_tracker_common::BaseTracker`` class
+  will be filled by both poses alternatively and would not be usable.
+
+Tips and Tricks: Tag pose not published
+=======================================
+
+Several clues can show that the poses are not computed:
+
+  - If you set ``display_tag`` to ``true``, the tags borders are displayed but the frame is not projected in the image.
+  - In the console, there are some error messages:
+
+    .. code-block:: shell
+
+      $ ros2 launch visp_tk_tutorials apriltag_tracker_live_v4l_launch.py
+      ...
+      [visp_apriltag_node-2] [INFO] [1790253340.305237753] [tracker_apriltag]: Receive image
+      [visp_apriltag_node-2] [WARN] [1790253340.310646522] [tracker_apriltag]: Published RGB camera parameters are incorrect.
+      [visp_apriltag_node-2] [WARN] [1790253340.340782250] [tracker_apriltag]: Published RGB camera parameters are incorrect.
+      [visp_apriltag_node-2] [WARN] [1790253340.373742210] [tracker_apriltag]: Published RGB camera parameters are incorrect.
+  - If you echo the topic ``/tracker_apriltag/tags_info``, you will see:
+
+    .. code-block:: shell
+
+      ...
+      is_pose_valid: false
+      pose:
+          position:
+          x: 0.0
+          y: 0.0
+          z: 0.0
+          orientation:
+          x: 0.0
+          y: 0.0
+          z: 0.0
+          w: 1.0
+
+It probably means:
+
+  - that your camera is not calibrated. See for instance the documentation of the `camera_calibration package <https://docs.ros.org/en/rolling/p/camera_calibration/doc/tutorial_mono.html>`__ to see how to calibrate your camera.
+
+  - or that you forgot to set the ``rgb_camera_info_topic_name`` parameter to subscribe to the camera parameters required for the pose computation.
